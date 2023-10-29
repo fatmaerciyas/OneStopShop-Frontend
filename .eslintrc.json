@@ -1,0 +1,10 @@
+// eslint-disable-next-line MESSAGE_TO_DISABLE
+{
+  "extends": "react-app",
+  "rules": {
+    "react-refresh/only-export-components": [
+      "warn",
+      { "allowConstantExport": true }
+    ]
+  }
+}
