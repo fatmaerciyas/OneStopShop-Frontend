@@ -1,9 +1,16 @@
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import { Switch } from "@mui/material";
+import { NavLink } from "react-router-dom";
+
+const midLinks = [
+  { title: "catalog", path: "/catalog" },
+  { title: "about", path: "/about" },
+  { title: "contact", path: "/contact" },
+];
+
+const rightLinks = [
+  { title: "login", path: "/login" },
+  { title: "register", path: "/register" },
+];
 
 interface Props {
   darkMode: boolean;
@@ -12,21 +19,40 @@ interface Props {
 
 export default function Header({ darkMode, handleThemeChange }: Props) {
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" className="mb-10">
-        <Toolbar>
+    <div>
+      <div className="mb-10 bg-yellow-200 sm:px-6 sm:py-4 flex justify-between items-center">
+        <div className="flex justify-between ">
+          <div className="mt-2 mr-4">ONESTOPSHOP</div>
           <Switch
             checked={darkMode}
             onChange={handleThemeChange}
             defaultChecked
           />
+        </div>
+        <div className="mt-2">
+          {midLinks.map(({ title, path }) => (
+            <NavLink
+              className="mr-2 hover:bg-fuchsia-600"
+              to={path}
+              key={title}
+            >
+              {title.toUpperCase()}
+            </NavLink>
+          ))}
+        </div>
 
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            News
-          </Typography>
-          <Button color="inherit">Hello</Button>
-        </Toolbar>
-      </AppBar>
-    </Box>
+        <div>
+          {rightLinks.map(({ title, path }) => (
+            <NavLink
+              className="mr-2 hover:bg-fuchsia-600"
+              to={path}
+              key={title}
+            >
+              {title.toUpperCase()}
+            </NavLink>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
