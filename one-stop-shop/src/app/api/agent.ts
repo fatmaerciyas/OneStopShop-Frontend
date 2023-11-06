@@ -5,6 +5,7 @@ import { router } from "../router/Routes";
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 500));
 
 axios.defaults.baseURL = "https://localhost:7049/api/";
+axios.defaults.withCredentials = true;
 
 const responseBody = (response: AxiosResponse) => response.data;
 
@@ -69,10 +70,19 @@ const TestErrors = {
   getValidationError: () => requests.get("buggy/validation-error"),
 };
 
+const Cart = {
+  list: () => requests.get("Cart"),
+  addItem: (productId: number, quantity = 1) =>
+    requests.post(`Cart?productId=${productId}&quantity=${quantity}`, {}), //we still need empty object to run this progress
+  removeItem: (productId: number, quantity = 1) =>
+    requests.delete(`Cart?productId=${productId}&quantity=${quantity}`),
+};
+
 // EXPORT OUR OBJECTS
 const agent = {
   Catalog,
   TestErrors,
+  Cart,
 };
 
 //Export it

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export default function NotFound() {
   return (
-    <Container component={Paper} className="h-40">
+    <Container component={Paper} classNameNameName="h-40">
       <Typography gutterBottom variant="h4">
         Oops- we could not find what you are looking for
       </Typography>

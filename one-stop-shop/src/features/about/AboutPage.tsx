@@ -13,7 +13,7 @@
 // import agent from "../../app/api/agent";
 
 export default function AboutPage() {
-  return <h2>heloo</h2>;
+  return <h2 className="m-40">heloo</h2>;
   // const [validationErrors, setValidationErrors = useState<string[]>([]);
   // function getValidatonError(){
   //   agent.TestErrors.getValidationError()
