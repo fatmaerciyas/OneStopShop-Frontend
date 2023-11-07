@@ -77,7 +77,6 @@ function App() {
 
         <a
           href="#"
-          onclick="topFunction()"
           id="back-to-top"
           className="back-to-top fixed hidden text-lg rounded-full z-10 bottom-5 end-5 h-9 w-9 text-center bg-indigo-600 text-white leading-9"
         >
@@ -91,10 +90,7 @@ function App() {
               className="checkbox opacity-0 absolute"
               id="chk"
             />
-            <label
-              className="label bg-slate-900 dark:bg-white shadow dark:shadow-gray-800 cursor-pointer rounded-full flex justify-between items-center p-1 w-14 h-8"
-              for="chk"
-            >
+            <label className="label bg-slate-900 dark:bg-white shadow dark:shadow-gray-800 cursor-pointer rounded-full flex justify-between items-center p-1 w-14 h-8">
               <i className="uil uil-moon text-[20px] text-yellow-500"></i>
               <i className="uil uil-sun text-[20px] text-yellow-500"></i>
               <span className="ball bg-white dark:bg-slate-900 rounded-full absolute top-[2px] left-[2px] w-7 h-7"></span>

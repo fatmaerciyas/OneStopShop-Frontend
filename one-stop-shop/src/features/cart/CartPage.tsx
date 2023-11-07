@@ -1,15 +1,33 @@
 import { useEffect, useState } from "react";
-import { Cart } from "../../app/models/cart";
-import agent from "../../app/api/agent";
-import LoadingComponents from "../../app/layout/LoadingComonents";
 
-//import { useStoreContext } from "../../app/context/StoreContext";
+import LoadingComponents from "../../app/layout/LoadingComonents";
+import TotalComponent from "../../app/layout/TotalComponent";
+
+import { useStoreContext } from "../../app/context/StoreContext";
+import agent from "../../app/api/agent";
+import { Cart } from "../../app/models/cart";
 
 export default function CartPage() {
-  //const { cart } = useStoreContext();
+  const { removeItem } = useStoreContext();
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [cart, setCart] = useState<Cart | null>(null);
+
+  function handleAddItem(productId: number) {
+    setLoading(true);
+    agent.Cart.addItem(productId)
+      .then((cart) => setCart(cart))
+      .catch((error) => console.log(error))
+      .finally(() => setLoading(false));
+  }
+
+  function handleRemoveItem(productId: number, quantity = 1) {
+    setLoading(true);
+    agent.Cart.removeItem(productId, quantity)
+      .then(() => removeItem(productId, quantity))
+      .catch((error) => console.log(error))
+      .finally(() => setLoading(false));
+  }
 
   useEffect(() => {
     agent.Cart.list()
@@ -24,7 +42,7 @@ export default function CartPage() {
   return (
     <div className="m-40">
       {cart.buyerId}
-      {/* <section className="relative table w-full py-20 lg:py-24 bg-gray-50 dark:bg-slate-800">
+      <section className="relative table w-full py-20 lg:py-24 bg-gray-50 dark:bg-slate-800">
         <div className="container relative">
           <div className="grid grid-cols-1 mt-14">
             <h3 className="text-3xl leading-normal font-semibold">Cart</h3>
@@ -57,6 +75,7 @@ export default function CartPage() {
                 <thead className="text-sm uppercase bg-slate-50 dark:bg-slate-800">
                   <tr>
                     <th scope="col" className="p-4 w-4"></th>
+                    <th scope="col" className="p-4 w-4"></th>
                     <th scope="col" className="text-start p-4 min-w-[220px]">
                       Product
                     </th>
@@ -69,6 +88,8 @@ export default function CartPage() {
                     <th scope="col" className="p-4 w-24 min-w-[100px]">
                       Total($)
                     </th>
+                    <th scope="col" className="p-4 w-24 min-w-[100px]"></th>
+                    <th scope="col" className="p-4 w-4"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -77,6 +98,9 @@ export default function CartPage() {
                       key={item.productId}
                       className="bg-white dark:bg-slate-900"
                     >
+                      <td className="p-4">
+                        <img className="w-20 h-20" src={item.image} />
+                      </td>
                       <td className="p-4">
                         <a href="#">
                           <i className="mdi mdi-window-close text-red-600"></i>
@@ -101,29 +125,37 @@ export default function CartPage() {
                       </td>
                       <td className="p-4 text-center">
                         <div className="qty-icons">
-                          <button
-                            onclick="this.parentNode.querySelector('input[type=number]').stepDown()"
-                            className="h-9 w-9 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-md bg-indigo-600/5 hover:bg-indigo-600 border border-indigo-600/10 hover:border-indigo-600 text-indigo-600 hover:text-white minus"
-                          >
-                            -
-                          </button>
-                          <input
-                            min="0"
-                            name="quantity"
-                            value={item.quantity}
-                            type="number"
-                            className="h-9 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-md bg-indigo-600/5 hover:bg-indigo-600 border border-indigo-600/10 hover:border-indigo-600 text-indigo-600 hover:text-white pointer-events-none w-16 ps-4 quantity"
-                          />
-                          <button
-                            onclick="this.parentNode.querySelector('input[type=number]').stepUp()"
-                            className="h-9 w-9 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-md bg-indigo-600/5 hover:bg-indigo-600 border border-indigo-600/10 hover:border-indigo-600 text-indigo-600 hover:text-white plus"
-                          >
-                            +
-                          </button>
+                          <div className="justify-between">
+                            <button
+                              onClick={() => handleRemoveItem(item.productId)}
+                              className="h-9 w-9 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-md bg-indigo-600/5 hover:bg-indigo-600 border border-indigo-600/10 hover:border-indigo-600 text-indigo-600 hover:text-white minus"
+                            >
+                              -
+                            </button>
+                            <span className="h-9 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-md bg-indigo-600/5 hover:bg-indigo-600 border border-indigo-600/10 hover:border-indigo-600 text-indigo-600 hover:text-white pointer-events-none w-16 ps-4 quantity">
+                              {item.quantity}
+                            </span>
+                            <button
+                              onClick={() => handleAddItem(item.productId)} //() => setQuantity((a) => a + 1)
+                              className="h-9 w-9 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-md bg-indigo-600/5 hover:bg-indigo-600 border border-indigo-600/10 hover:border-indigo-600 text-indigo-600 hover:text-white plus"
+                            >
+                              +
+                            </button>
+                          </div>
                         </div>
                       </td>
                       <td className="p-4 text-end">
                         $ {(item.price * item.quantity).toFixed(2)}
+                      </td>
+                      <td className="p-4 text-right">
+                        <button
+                          onClick={() =>
+                            handleRemoveItem(item.productId, item.quantity)
+                          }
+                          className="text-red-500"
+                        >
+                          &times;
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -147,22 +179,7 @@ export default function CartPage() {
                 </a>
               </div>
 
-              <div className="lg:col-span-3 md:order-2 order-1">
-                <ul className="list-none shadow dark:shadow-gray-800 rounded-md">
-                  <li className="flex justify-between p-4">
-                    <span className="font-semibold text-lg">Subtotal :</span>
-                    <span className="text-slate-400">$ 1500</span>
-                  </li>
-                  <li className="flex justify-between p-4 border-t border-gray-100 dark:border-gray-800">
-                    <span className="font-semibold text-lg">Cargo :</span>
-                    <span className="text-slate-400">$ 30</span>
-                  </li>
-                  <li className="flex justify-between font-semibold p-4 border-t border-gray-200 dark:border-gray-600">
-                    <span className="font-semibold text-lg">Total :</span>
-                    <span className="font-semibold">$ 1530</span>
-                  </li>
-                </ul>
-              </div>
+              <TotalComponent />
             </div>
           </div>
         </div>
@@ -230,7 +247,7 @@ export default function CartPage() {
             </div>
           </div>
         </div>
-      </section> */}
+      </section>
     </div>
   );
 }

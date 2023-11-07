@@ -23,7 +23,7 @@ export function useStoreContext() {
 }
 
 //CREATE PROVIDER
-export function StoreProvider({ children }: PropsWithChildren<unknown>) {
+export function StoreProvider({ children }: PropsWithChildren<any>) {
   const [cart, setCart] = useState<Cart | null>(null);
 
   function removeItem(productId: number, quantity: number) {
