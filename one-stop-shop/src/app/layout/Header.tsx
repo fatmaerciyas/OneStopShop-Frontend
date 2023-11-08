@@ -46,7 +46,7 @@ export default function Header() {
 
           <div className="menu-extras">
             <div className="menu-item">
-              <a className="navbar-toggle" id="isToggle" onClick="toggleMenu()">
+              <a className="navbar-toggle" id="isToggle" onclick="toggleMenu()">
                 <div className="lines">
                   <span></span>
                   <span></span>

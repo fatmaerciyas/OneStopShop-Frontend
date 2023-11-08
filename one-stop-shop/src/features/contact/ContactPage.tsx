@@ -1,3 +1,12 @@
+import { CounterState } from "./counterReducer";
+
 export default function ContactPage() {
-  return <h2>Contact Page</h2>;
+  const { data, title } = useSelector((state: CounterState) => state);
+  return (
+    <>
+      {title}
+      <br />
+      The data is:{data}
+    </>
+  );
 }

@@ -1,25 +1,18 @@
 import { useEffect, useState } from "react";
 
 import LoadingComponents from "../../app/layout/LoadingComonents";
-import TotalComponent from "../../app/layout/TotalComponent";
+import TotalComponent from "./TotalComponent";
 
 import { useStoreContext } from "../../app/context/StoreContext";
 import agent from "../../app/api/agent";
 import { Cart } from "../../app/models/cart";
+import Quantity from "./Quantity";
 
 export default function CartPage() {
   const { removeItem } = useStoreContext();
 
   const [loading, setLoading] = useState(false);
   const [cart, setCart] = useState<Cart | null>(null);
-
-  function handleAddItem(productId: number) {
-    setLoading(true);
-    agent.Cart.addItem(productId)
-      .then((cart) => setCart(cart))
-      .catch((error) => console.log(error))
-      .finally(() => setLoading(false));
-  }
 
   function handleRemoveItem(productId: number, quantity = 1) {
     setLoading(true);
@@ -92,6 +85,7 @@ export default function CartPage() {
                     <th scope="col" className="p-4 w-4"></th>
                   </tr>
                 </thead>
+
                 <tbody>
                   {cart.items.map((item) => (
                     <tr
@@ -125,23 +119,7 @@ export default function CartPage() {
                       </td>
                       <td className="p-4 text-center">
                         <div className="qty-icons">
-                          <div className="justify-between">
-                            <button
-                              onClick={() => handleRemoveItem(item.productId)}
-                              className="h-9 w-9 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-md bg-indigo-600/5 hover:bg-indigo-600 border border-indigo-600/10 hover:border-indigo-600 text-indigo-600 hover:text-white minus"
-                            >
-                              -
-                            </button>
-                            <span className="h-9 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-md bg-indigo-600/5 hover:bg-indigo-600 border border-indigo-600/10 hover:border-indigo-600 text-indigo-600 hover:text-white pointer-events-none w-16 ps-4 quantity">
-                              {item.quantity}
-                            </span>
-                            <button
-                              onClick={() => handleAddItem(item.productId)} //() => setQuantity((a) => a + 1)
-                              className="h-9 w-9 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-md bg-indigo-600/5 hover:bg-indigo-600 border border-indigo-600/10 hover:border-indigo-600 text-indigo-600 hover:text-white plus"
-                            >
-                              +
-                            </button>
-                          </div>
+                          <Quantity item={item} />
                         </div>
                       </td>
                       <td className="p-4 text-end">

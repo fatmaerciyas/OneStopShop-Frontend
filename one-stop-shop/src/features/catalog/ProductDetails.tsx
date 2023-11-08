@@ -4,14 +4,26 @@ import { Product } from "../../app/models/product";
 import agent from "../../app/api/agent";
 import NotFound from "../../app/errors/NotFound";
 import LoadingComponents from "../../app/layout/LoadingComonents";
+import { useStoreContext } from "../../app/context/StoreContext";
+import Quantity from "../cart/Quantity";
 
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();
+
+  const { cart } = useStoreContext();
   const [product, setProduct] = useState<Product | null>(null);
 
   const [loading, setLoading] = useState(true);
+  const [quantity, setQuantity] = useState(0);
+
+  const item = cart?.items.find((i) => i.productId === product?.productId); //chech the cart id
+
+  if (item != undefined) {
+    console.log(item);
+  }
 
   useEffect(() => {
+    if (item) setQuantity(item.quantity);
     id && // HAVE TO USE id FIST, THEN IT'S AVAILABLE TO SEND details()
       agent.Catalog.details(parseInt(id))
         .then((response) => setProduct(response)) //response
@@ -23,7 +35,7 @@ export default function ProductDetails() {
     //   .then((response) => setProduct(response.data))
     //   .catch((error) => console.log(error))
     //   .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, item, quantity]);
 
   if (loading) return <LoadingComponents message="Loading product..." />;
 
@@ -110,7 +122,7 @@ export default function ProductDetails() {
                 <h5 className="text-2xl font-semibold">{product.name}</h5>
                 <div className="mt-2">
                   <span className="text-slate-400 font-semibold me-1">
-                    $16USD <del className="text-red-600">$21USD</del>
+                    ${product.price} <del className="text-red-600">$21USD</del>
                   </span>
 
                   <ul className="list-none inline-block text-orange-400">
@@ -186,45 +198,25 @@ export default function ProductDetails() {
                     </div>
                   </div>
 
-                  <div className="flex items-center">
-                    <h5 className="text-lg font-semibold me-2">Quantity:</h5>
-                    <div className="qty-icons ms-3">
-                      <button
-                        onclick="this.parentNode.querySelector('input[type=number]').stepDown()"
-                        className="h-9 w-9 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-md bg-indigo-600/5 hover:bg-indigo-600 border-indigo-600/10 border hover:border-indigo-600 text-indigo-600 hover:text-white minus"
-                      >
-                        -
-                      </button>
-                      <input
-                        min="0"
-                        name="quantity"
-                        value={product.quantity}
-                        type="number"
-                        className="h-9 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-md bg-indigo-600/5 hover:bg-indigo-600 border border-indigo-600/10 hover:border-indigo-600 text-indigo-600 hover:text-white pointer-events-none w-16 ps-4 quantity"
-                      />
-                      <button
-                        onclick="this.parentNode.querySelector('input[type=number]').stepUp()"
-                        className="h-9 w-9 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-md bg-indigo-600/5 hover:bg-indigo-600 border border-indigo-600/10 hover:border-indigo-600 text-indigo-600 hover:text-white plus"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
+                  <Quantity item={item!} />
                 </div>
 
                 <div className="mt-4">
-                  <a
-                    href="#"
-                    className="py-2 px-5 inline-block font-semibold tracking-wide border align-middle duration-500 text-base text-center bg-indigo-600 hover:bg-indigo-700 border-indigo-600 hover:border-indigo-700 text-white rounded-md me-2 mt-2"
-                  >
-                    Shop Now
-                  </a>
-                  <a
-                    href="#"
-                    className="py-2 px-5 inline-block font-semibold tracking-wide border align-middle duration-500 text-base text-center rounded-md bg-indigo-600/5 hover:bg-indigo-600 border-indigo-600/10 hover:border-indigo-600 text-indigo-600 hover:text-white mt-2"
-                  >
-                    Add to Cart
-                  </a>
+                  {item ? (
+                    <a
+                      href="#"
+                      className="py-2 px-5 inline-block font-semibold tracking-wide border align-middle duration-500 text-base text-center bg-indigo-600 hover:bg-indigo-700 border-indigo-600 hover:border-indigo-700 text-white rounded-md me-2 mt-2"
+                    >
+                      Buy Now
+                    </a>
+                  ) : (
+                    <a
+                      href="#"
+                      className="py-2 px-5 inline-block font-semibold tracking-wide border align-middle duration-500 text-base text-center rounded-md bg-indigo-600/5 hover:bg-indigo-600 border-indigo-600/10 hover:border-indigo-600 text-indigo-600 hover:text-white mt-2"
+                    >
+                      Add to Cart
+                    </a>
+                  )}
                 </div>
               </div>
             </div>
