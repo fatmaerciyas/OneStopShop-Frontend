@@ -4,14 +4,15 @@ import { Product } from "../../app/models/product";
 import agent from "../../app/api/agent";
 import NotFound from "../../app/errors/NotFound";
 import LoadingComponents from "../../app/layout/LoadingComonents";
-import { useStoreContext } from "../../app/context/StoreContext";
 import Quantity from "../cart/Quantity";
+import { useAppSelector } from "../../app/store/configureStore";
 
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();
 
-  const { cart } = useStoreContext();
+  const { cart } = useAppSelector((state) => state.cart);
   const [product, setProduct] = useState<Product | null>(null);
+  //const dispatch = useAppDispatch();
 
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(0);

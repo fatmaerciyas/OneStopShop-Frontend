@@ -3,31 +3,31 @@ import { useEffect, useState } from "react";
 import LoadingComponents from "../../app/layout/LoadingComonents";
 import TotalComponent from "./TotalComponent";
 
-import { useStoreContext } from "../../app/context/StoreContext";
 import agent from "../../app/api/agent";
-import { Cart } from "../../app/models/cart";
 import Quantity from "./Quantity";
+import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
+import { removeCartItemAsync, setCart } from "./cartSlice";
 
 export default function CartPage() {
-  const { removeItem } = useStoreContext();
-
+  const { cart } = useAppSelector((state) => state.cart);
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
-  const [cart, setCart] = useState<Cart | null>(null);
+  //const [cart, setCart] = useState<Cart | null>(null);
 
   function handleRemoveItem(productId: number, quantity = 1) {
     setLoading(true);
     agent.Cart.removeItem(productId, quantity)
-      .then(() => removeItem(productId, quantity))
+      .then(() => dispatch(removeCartItemAsync({ productId, quantity })))
       .catch((error) => console.log(error))
       .finally(() => setLoading(false));
   }
 
   useEffect(() => {
     agent.Cart.list()
-      .then((cart) => setCart(cart))
+      .then((cart) => dispatch(setCart(cart)))
       .catch((error) => console.log(error))
       .finally(() => setLoading(false));
-  }, []);
+  }, [dispatch]);
 
   if (loading) return <LoadingComponents message="Loading cart..." />;
   if (!cart) return <h3 className="m-40">Your cart is empty</h3>;

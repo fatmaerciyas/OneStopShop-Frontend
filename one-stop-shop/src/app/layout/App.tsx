@@ -1,4 +1,3 @@
-import { useStoreContext } from "../context/StoreContext";
 import Footer from "./Footer";
 import Header from "./Header";
 import { Outlet } from "react-router-dom";
@@ -6,22 +5,24 @@ import { useState, useEffect } from "react";
 import { getCookie } from "../util/util";
 import agent from "../api/agent";
 import LoadingComponents from "./LoadingComonents";
+import { useAppDispatch } from "../store/configureStore";
+import { setCart } from "../../features/cart/cartSlice";
 
 function App() {
-  const { setCart } = useStoreContext();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const buyerId = getCookie("buyerId");
     if (buyerId) {
       agent.Cart.list()
-        .then((cart) => setCart(cart))
+        .then((cart) => dispatch(setCart(cart)))
         .finally(() => console.log("error"));
       //.finally(() => setLoading(false));
     } else {
       setLoading(false);
     }
-  }, [setCart]);
+  }, [dispatch]);
 
   if (loading) return <LoadingComponents message="initialising app.." />;
 

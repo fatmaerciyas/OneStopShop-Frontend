@@ -1,23 +1,25 @@
 import agent from "../../app/api/agent";
-import { useStoreContext } from "../../app/context/StoreContext";
 import { CartItem } from "../../app/models/cart";
 import { useState, useEffect } from "react";
 import LoadingComponents from "../../app/layout/LoadingComonents";
 import TotalComponent from "./TotalComponent";
+import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
+import { removeCartItemAsync, setCart } from "./cartSlice";
 
 interface Props {
   item: CartItem;
 }
 
 export default function Quantity({ item }: Props) {
-  const [cart, setCart] = useState<CartItem | null>(null);
+  const { cart } = useAppSelector((state) => state.cart);
+
   const [loading, setLoading] = useState(false);
-  const { removeItem } = useStoreContext();
+  const dispatch = useAppDispatch();
 
   function handleAddItem(productId: number) {
     setLoading(true);
     agent.Cart.addItem(productId)
-      .then((cart) => setCart(cart))
+      .then((cart) => dispatch(setCart(cart)))
       .catch((error) => console.log(error))
       .finally(() => setLoading(false));
     console.log(item);
@@ -26,7 +28,7 @@ export default function Quantity({ item }: Props) {
   function handleRemoveItem(productId: number, quantity = 1) {
     setLoading(true);
     agent.Cart.removeItem(productId, quantity)
-      .then(() => removeItem(productId, quantity))
+      .then(() => dispatch(removeCartItemAsync({ productId, quantity })))
       .catch((error) => console.log(error))
       .finally(() => setLoading(false));
   }
